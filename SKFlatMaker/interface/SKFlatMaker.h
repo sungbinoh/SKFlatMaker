@@ -242,7 +242,11 @@ class SKFlatMaker : public edm::EDAnalyzer
   edm::EDGetTokenT< reco::VertexCollection >             PrimaryVertexToken;
   edm::EDGetTokenT< edm::View<reco::Track> >             TrackToken;
   edm::EDGetTokenT< std::vector< PileupSummaryInfo > >   PileUpInfoToken;
-  
+
+  // -- Tokens for L1 Prefiring reweight
+  edm::EDGetTokenT< double > prefweight_token;
+  edm::EDGetTokenT< double > prefweightup_token;
+  edm::EDGetTokenT< double > prefweightdown_token;
   
   //edm::Handle<bool> ifilterbadChCand;
   //edm::Handle<bool> ifilterbadPFMuon;
@@ -359,7 +363,12 @@ class SKFlatMaker : public edm::EDAnalyzer
   double PVy;
   double PVz;
   double PVprob;
-  
+
+  //==== L1 Prefiring Reweight
+  double L1PrefiringReweight;
+  double L1PrefiringReweight_Up;
+  double L1PrefiringReweight_Down;
+
   //==== trigger object
 
   vector<string> HLT_TriggerName;

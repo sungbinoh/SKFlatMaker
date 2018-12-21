@@ -29,6 +29,10 @@ git cms-merge-topic guitargeek:EgammaID_9_4_X
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription#Instructions_for_9_4_X_X_9_for_2
 git cms-merge-topic cms-met:METFixEE2017_949_v2
 
+# L1 Prefiring Reweight
+# https://twiki.cern.ch/twiki/bin/view/CMS/L1ECALPrefiringWeightRecipe
+git cms-merge-topic lathomas:L1Prefiring_9_4_9
+
 # Copy this code
 git clone git@github.com:CMSSNU/SKFlatMaker.git
 cd SKFlatMaker

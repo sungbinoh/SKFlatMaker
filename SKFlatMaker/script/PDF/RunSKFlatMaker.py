@@ -81,20 +81,19 @@ print 'year = '+str(options.year)
 
 #### Global Tag
 #### https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#2017_and_2016_re_miniAOD_94X_ver
-
-GT_MC = '94X_mc2017_realistic_v14'
-GT_DATA = '94X_dataRun2_v6'
+#### https://twiki.cern.ch/twiki/bin/view/CMS/JECDataMC
+GT_MC = '94X_mc2017_realistic_v17'
+GT_DATA = '94X_dataRun2_v11'
 if Is2016:
   GT_DATA = '94X_dataRun2_v10'
   GT_MC = '94X_mcRun2_asymptotic_v3'
 elif Is2017:
-  GT_MC = '94X_mc2017_realistic_v14'
-  GT_DATA = '94X_dataRun2_v6'
+  GT_MC = '94X_mc2017_realistic_v17'
+  GT_DATA = '94X_dataRun2_v11'
 elif Is2018:
-  GT_MC = '102X_upgrade2018_realistic_v12'
+  GT_MC = '102X_upgrade2018_realistic_v16'
   GT_DATA = '102X_dataRun2_Sep2018Rereco_v1'
-  if (not isMC) and '2018Prompt' in options.sampletype:
-    GT_DATA = '102X_dataRun2_Prompt_v11'
+  if (not isMC) and '2018Prompt' in option
 
 
 ####################################################################################################################
@@ -195,6 +194,9 @@ myEleID =  [
 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V2_cff',
 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V2_cff',
 ]
+
+#### Official L1 Prefiering reweight
+
 
 if Is2016:
 

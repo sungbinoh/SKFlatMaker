@@ -60,6 +60,12 @@ GsfTrackToken                       ( consumes< std::vector< reco::GsfTrack > > 
 TriggerToken                        ( consumes< edm::TriggerResults >                       (iConfig.getUntrackedParameter<edm::InputTag>("TriggerResults")) ),
 TriggerTokenPAT                     ( consumes< edm::TriggerResults >                       (iConfig.getUntrackedParameter<edm::InputTag>("TriggerResultsPAT")) ),
 TriggerObjectToken                  ( consumes< std::vector<pat::TriggerObjectStandAlone> > (iConfig.getUntrackedParameter<edm::InputTag>("TriggerObject")) ),
+
+// -- L1 Prefiring Reweight
+prefweight_token                    (consumes< double >                                     (iConfig.getUntrackedParameter<edm::InputTag>("prefiringweight:NonPrefiringProb")) ),
+prefweightup_token                  (consumes< double >                                     (iConfig.getUntrackedParameter<edm::InputTag>("prefiringweight:NonPrefiringProbUp")) ),
+prefweightdown_token                (consumes< double >                                     (iConfig.getUntrackedParameter<edm::InputTag>("prefiringweight:NonPrefiringProbDown")) ),
+
 // -- Else -- //
 GenEventInfoToken                   ( consumes< GenEventInfoProduct >                       (iConfig.getUntrackedParameter<edm::InputTag>("GenEventInfo")) ),
 BeamSpotToken                       ( consumes< reco::BeamSpot >                            (iConfig.getUntrackedParameter<edm::InputTag>("BeamSpot")) ),
@@ -149,7 +155,7 @@ PileUpInfoToken                     ( consumes< std::vector< PileupSummaryInfo >
   //   PileUpRDMuonPhys_ = iConfig.getParameter< std::vector<double> >("PileUpRDMuonPhys");
   //   PileUpMC_ = iConfig.getParameter< std::vector<double> >("PileUpMC");
   // }
-  
+
   if(theDebugLevel) cout << "[SKFlatMaker::SKFlatMaker] Constructor finished" << endl;
 
 }
@@ -191,7 +197,12 @@ void SKFlatMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   PVy = -1000;
   PVz = -1000;
   PVprob = -1;
-  
+
+  // -- L1 Prefiring Reweight -- //
+  L1PrefiringReweight = -1;
+  L1PrefiringReweight_Up = -1;
+  L1PrefiringReweight_Down = -1;
+
   // -- PF iso deposits -- // 
   sumEt = 0;
   photonEt = 0;
@@ -586,6 +597,25 @@ void SKFlatMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       
   }
 
+  //==========================
+  //==== L1 Prefiring Reweight
+  //==========================
+  edm::Handle< double > theprefweight;
+  iEvent.getByToken(prefweight_token, theprefweight ) ;
+  double _prefiringweight =(*theprefweight);
+
+  edm::Handle< double > theprefweightup;
+  iEvent.getByToken(prefweightup_token, theprefweightup ) ;
+  double _prefiringweightup =(*theprefweightup);
+
+  edm::Handle< double > theprefweightdown;
+  iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
+  double _prefiringweightdown =(*theprefweightdown);
+  
+  L1PrefiringReweight = _prefiringweight;
+  L1PrefiringReweight_Up = _prefiringweightup;
+  L1PrefiringReweight_Down = _prefiringweightdown;
+
   //==================
   //==== Prepare JEC
   //==================
@@ -717,7 +747,10 @@ void SKFlatMaker::beginJob()
   DYTree->Branch("Flag_eeBadScFilter",&Flag_eeBadScFilter,"Flag_eeBadScFilter/O");
   DYTree->Branch("Flag_ecalBadCalibFilter",&Flag_ecalBadCalibFilter,"Flag_ecalBadCalibFilter/O");
 
-  
+  //L1PrefiringReweight
+  DYTree->Branch("L1PrefiringReweight", &L1PrefiringReweight, "L1PrefiringReweight/D");
+  DYTree->Branch("L1PrefiringReweight_Up", &L1PrefiringReweight_Up, "L1PrefiringReweight_Up/D");
+  DYTree->Branch("L1PrefiringReweight_Down", &L1PrefiringReweight_Down, "L1PrefiringReweight_Down/D");
   
   if(theStorePriVtxFlag){
     DYTree->Branch("PVtrackSize", &PVtrackSize,"PVtrackSize/I");

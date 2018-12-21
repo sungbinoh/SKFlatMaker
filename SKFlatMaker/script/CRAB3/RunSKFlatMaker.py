@@ -81,20 +81,20 @@ print 'year = '+str(options.year)
 
 #### Global Tag
 #### https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#2017_and_2016_re_miniAOD_94X_ver
-
-GT_MC = '94X_mc2017_realistic_v14'
-GT_DATA = '94X_dataRun2_v6'
+#### https://twiki.cern.ch/twiki/bin/view/CMS/JECDataMC
+GT_MC = '94X_mc2017_realistic_v17'
+GT_DATA = '94X_dataRun2_v11'
 if Is2016:
   GT_DATA = '94X_dataRun2_v10'
   GT_MC = '94X_mcRun2_asymptotic_v3'
 elif Is2017:
-  GT_MC = '94X_mc2017_realistic_v14'
-  GT_DATA = '94X_dataRun2_v6'
+  GT_MC = '94X_mc2017_realistic_v17'
+  GT_DATA = '94X_dataRun2_v11'
 elif Is2018:
-  GT_MC = '102X_upgrade2018_realistic_v12'
+  GT_MC = '102X_upgrade2018_realistic_v16'
   GT_DATA = '102X_dataRun2_Sep2018Rereco_v1'
   if (not isMC) and '2018Prompt' in options.sampletype:
-    GT_DATA = '102X_dataRun2_Prompt_v11'
+    GT_DATA = '102X_dataRun2_Prompt_v12'
 
 
 ####################################################################################################################
@@ -196,6 +196,30 @@ myEleID =  [
 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V2_cff',
 ]
 
+###############################################
+#### -- Official L1 Prefiring reweight -- ####
+###############################################
+#### Default L1 prefiring reweight : 2017 Campaign
+process.prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
+                                         ThePhotons = cms.InputTag("slimmedPhotons"),
+                                         TheJets = cms.InputTag("slimmedJets"),
+                                         L1Maps = cms.string("L1PrefiringMaps_new.root"), # location of map root file
+                                         DataEra = cms.string("2017BtoF"),
+                                         UseJetEMPt = cms.bool(True), #False : jet pt VS eta map. True : jet pt(em) VS eta map
+                                         PrefiringRateSystematicUncty = cms.double(0.2) #Minimum relative prefiring uncty per object
+                                         )
+#### L1 prefiring reweight : 2016 Campaign
+if Is2016:
+  process.prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
+                                           hePhotons = cms.InputTag("slimmedPhotons"),
+                                           TheJets = cms.InputTag("slimmedJets"),
+                                           L1Maps = cms.string("L1PrefiringMaps_new.root"),
+                                           DataEra = cms.string("2016BtoH"),
+                                           UseJetEMPt = cms.bool(True),
+                                           PrefiringRateSystematicUncty = cms.double(0.2)
+                                           }
+
+
 if Is2016:
 
   print "################"
@@ -211,6 +235,7 @@ if Is2016:
 
   process.p = cms.Path(
     process.egammaPostRecoSeq *
+    process.prefiringweight *
     process.recoTree
   )
 
@@ -241,6 +266,7 @@ elif Is2017:
   process.p = cms.Path(
     process.egammaPostRecoSeq *
     process.fullPatMetSequenceModifiedMET *
+    process.prefiringweight *
     process.recoTree
   )
 
