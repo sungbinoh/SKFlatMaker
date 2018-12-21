@@ -196,7 +196,24 @@ myEleID =  [
 ]
 
 #### Official L1 Prefiering reweight
-
+process.prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
+                                         ThePhotons = cms.InputTag("slimmedPhotons"),
+                                         TheJets = cms.InputTag("slimmedJets"),
+                                         L1Maps = cms.string("L1PrefiringMaps_new.root"),
+                                         DataEra = cms.string("2017BtoF"),
+                                         UseJetEMPt = cms.bool(True),
+                                         PrefiringRateSystematicUncty = cms.double(0.2)
+                                         )
+#### L1 prefiring reweight : 2016 Campaign 
+if Is2016:
+  process.prefiringweight = cms.EDProducer("L1ECALPrefiringWeightProducer",
+                                           hePhotons = cms.InputTag("slimmedPhotons"),
+                                           TheJets = cms.InputTag("slimmedJets"),
+                                           L1Maps = cms.string("L1PrefiringMaps_new.root"),
+                                           DataEra = cms.string("2016BtoH"),
+                                           UseJetEMPt = cms.bool(True),
+                                           PrefiringRateSystematicUncty = cms.double(0.2)
+                                           }
 
 if Is2016:
 
@@ -213,6 +230,7 @@ if Is2016:
 
   process.p = cms.Path(
     process.egammaPostRecoSeq *
+    process.prefiringweight *
     process.recoTree
   )
 
@@ -243,6 +261,7 @@ elif Is2017:
   process.p = cms.Path(
     process.egammaPostRecoSeq *
     process.fullPatMetSequenceModifiedMET *
+    process.prefiringweight *
     process.recoTree
   )
 
